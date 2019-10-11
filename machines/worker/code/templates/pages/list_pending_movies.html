@@ -1,0 +1,19 @@
+{% extends "base/bootstrap.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block Body %}
+
+    <h2>{% trans "Lista mea de Vizionare" %}</h2>
+
+    {% if not PendingListMovies %}
+        <div class="alert alert-info">
+            {% trans "Nu exista filme adaugate in aceasta lista." %}
+        </div>
+    {% else %}
+        {% for movie in PendingListMovies %}
+            {% include "blocks/movie_single.html" %}
+        {% endfor %}
+    {% endif %}
+
+{% endblock %}

@@ -1,0 +1,29 @@
+# HomeCloud
+# > .gitignore
+#
+# Author: Narcis.IO <n@narcis.io>
+
+# docker secrets
+/runtime/secrets/*.txt
+!/runtime/secrets/git.empty
+/runtime/secrets/worker/*.txt
+!/runtime/secrets/worker/git.empty
+
+# basics
+nbproject
+nb-configuration.xml
+Session.vim
+*.tmproj
+*.tmproject
+tmtags
+Thumbs.db
+Desktop.ini
+.DS_Store
+/.idea
+*.pyc
+/.vscode
+
+# runtime files
+/runtime/mysql/*
+!/runtime/mysql/git.empty
+!/runtime/mysql/.git_empty

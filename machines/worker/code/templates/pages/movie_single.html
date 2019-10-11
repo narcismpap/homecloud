@@ -1,0 +1,210 @@
+{% extends "base/bootstrap.html" %}
+{% load hc_helper %}
+{% load i18n %}
+{% load humanize %}
+
+{% block Body %}
+    <style>
+
+    </style>
+    <div class="page-movie-single" style="margin-bottom: 200px">
+
+        <div class="toolbox">
+            <div class="row">
+
+                <div class="col-xs-6 col-sm-4 col-md-2">
+                    <a style="cursor: pointer" href="/">
+                        <i class="fa fa-chevron-circle-left"></i>
+                        {% trans "Inapoi la Lista Filme" %}
+                    </a>
+                </div>
+
+
+                <div class="col-xs-6 col-sm-4 col-md-2">
+                    <a target="_blank" href="http://www.imdb.com/title/{{ Movie.imdb_id }}/">
+                        <i class="fa fa-external-link"></i>
+                        {% trans "IMDb" %}
+                    </a>
+                </div>
+
+                {% if CurrentUser %}
+
+                    {% if not Movie|is_movie_added_to_seen:CurrentUser %}
+                        <div class="col-xs-6 col-sm-4 col-md-2">
+                            <a style="cursor: pointer" onclick="$.get('{% url "AddToSeen" Movie.pk %}'); $('#added_to_viewedc').show(); $(this).remove(); return false;">
+                                <i class="fa fa-plus-circle"></i>
+                                {% trans "Adaugare la Vizionate" %}
+                            </a>
+
+                            <div id="added_to_viewedc" style="display: none">
+                            <i class="fa fa-check-circle"></i>
+                            {% trans "Film Vizionat" %}
+                            </div>
+                        </div>
+                    {% else %}
+                        <div class="col-xs-6 col-sm-4 col-md-2">
+                            <i class="fa fa-check-circle"></i>
+                            {% trans "Film Vizionat" %}
+                        </div>
+                    {% endif %}
+
+                    {% if not Movie|is_movie_added_to_pending:CurrentUser and not Movie|is_movie_added_to_seen:CurrentUser %}
+                        <div class="col-xs-6 col-sm-4 col-md-2">
+                            <a style="cursor: pointer" onclick="$.get('{% url "AddToView" Movie.pk %}'); $('#added_to_viewc').show(); $(this).remove();">
+                                <i class="fa fa-plus-circle"></i>
+                                {% trans "Adaugare de Vizionat" %}
+                            </a>
+
+                            <div id="added_to_viewc" style="display: none">
+                                <i class="fa fa-check-circle"></i>
+                                {% trans "Film pentru Vizionat" %}
+                            </div>
+                        </div>
+                    {% else %}
+                        {% if not Movie|is_movie_added_to_seen:CurrentUser %}
+                            <div class="col-xs-6 col-sm-4 col-md-2">
+                                <i class="fa fa-check-circle"></i>
+                                {% trans "Film pentru Vizionat" %}
+                            </div>
+                       {% endif %}
+                    {% endif %}
+
+                {% endif %}
+
+
+
+                <!--<div class="col-xs-6 col-sm-4 col-md-2 pull-right">
+                    <a style="cursor: pointer" onclick="subtitleAssist()">
+                        <i class="fa fa-flash"></i>
+                        {% trans "Asistent Subtitrare" %}
+                    </a>
+                </div>-->
+
+                <div class="col-xs-6 col-sm-4 col-md-2 pull-right">
+                    <form action="" method="POST" id="toggleForm">
+                        {% csrf_token %}
+                        <input type="hidden" name="action" value="toggle_subtitles" />
+                        <a style="cursor: pointer" onclick="$('#toggleForm').submit();">
+                            <i class="fa fa-stack-exchange"></i>
+                            {% trans "Toggle Subtitle" %}
+                        </a>
+                    </form>
+
+                </div>
+
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-xs-12 col-md-3">
+                <img src="{{ Movie.get_poster_url }}" style="width: 100%; height: auto" />
+            </div>
+
+            <div class="col-xs-12 col-md-9">
+                <h2 style="margin-top: 0">
+                    {{ Movie.name }}
+                    <small>({{ Movie.release_date.year }})</small>
+                </h2>
+
+                {% if Movie.tagline %}
+                    <div class="m-label">
+                        {% trans "Introducere" %}
+                        <span style="float: right">
+                            <a style="cursor: pointer" onclick="$('.tagline-lang').hide(); $('.tagline-lang-en').show();">{% trans "Engleza" %}</a> -
+                            <a style="cursor: pointer" onclick="$('.tagline-lang').hide(); $('.tagline-lang-ro').show();">{% trans "Romana" %}</a>
+                        </span>
+                    </div>
+
+                    <p style="color: #666" class="tagline-lang tagline-lang-en">{{ Movie.tagline|safe }}</p>
+                    <p style="color: #666; display: none" class="tagline-lang tagline-lang-ro">{{ Movie.tagline_translated|safe }}</p>
+                {% endif %}
+
+                <div class="m-label">
+                    {% trans "Despre film" %}
+                    <span style="float: right">
+                        <a style="cursor: pointer" onclick="$('.overview-lang').hide(); $('.overview-lang-en').show();">{% trans "Engleza" %}</a> -
+                        <a style="cursor: pointer;" onclick="$('.overview-lang').hide(); $('.overview-lang-ro').show();">{% trans "Romana" %}</a>
+                    </span>
+                </div>
+
+                <p style="color: #666" class="overview-lang overview-lang-en">{{ Movie.overview|safe }}</p>
+                <p style="color: #666; display: none" class="overview-lang overview-lang-ro">{{ Movie.overview_translated|safe }}</p>
+
+                <div class="m-label">{% trans "Statistici" %}</div>
+                <p style="color: #666" class="overview-lang overview-lang-en">
+                    {% trans "Durata film: " %} {{ Movie.get_formatted_runtime }}, {% trans "lansat in" %} {{ Movie.release_date }}<br />
+                    {% trans "Castiguri BoxOffice: " %} {{ Movie.revenue|intcomma }} USD<br />
+                </p>
+
+                <div class="m-label">{% trans "Categorii Cinematografice" %}</div>
+                {{ Movie.get_linked_genres_count|safe }}
+
+                <div class="m-label">{% trans "Studio(uri) de Productie" %}</div>
+                {{ Movie.get_linked_production_companies_count|safe }}
+
+                <div style="margin-top: 10px" class="m-label">{% trans "Localizare Media" %}</div>
+                <p style="color: #666">
+
+                    {% trans "Subtitrare in romana? " %} -
+                    {% if Movie.is_subtitled %}<span style="font-weight: bold; color: darkolivegreen">{% trans "DA" %}</span>
+                    {% else %}<span style="font-weight: bold; color: #ae1b1f">{% trans "NU" %}</span>{% endif %}
+                    <br />
+
+                    {% trans "Localizare Fisier: " %} {{ Movie.local_path }}<br/>
+                    {% trans "Denumire Fisier: " %} {{ Movie.file_name }}<br/>
+                </p>
+
+            </div>
+
+        </div>
+
+        <div class="row" style="margin-top: 10px; border-top: 1px solid #dddddd; padding-top: 10px">
+
+            <div class="col-xs-12 col-md-6">
+                <h4>{% trans "Personaje" %} <small>({{ Movie.get_cast.count }} {% trans "caractere majore" %})</small></h4>
+                <div class="movie-cast row">
+
+                    {% for cast in Movie.get_cast %}
+                        <div class="col-xs-12 col-md-6" style="height: 90px; overflow: hidden; margin-bottom: 10px">
+
+                            <div class="row">
+                                <div class="col-xs-4">
+                                    <a href="{% url "Actor" cast.actor.pk %}">
+                                        <img src="{{ cast.actor.get_profile_image_url }}" style="width: 100%; height: auto" />
+                                    </a>
+                                </div>
+                                <div class="col-xs-8">
+                                    <h5 style="margin-bottom: 0px">
+                                        <small>{{ cast.order|add:1 }}. </small>
+                                        {{ cast.name }}
+                                    </h5>
+                                    <p style="margin-top: 5px; color: #666">
+                                        <a href="{% url "Actor" cast.actor.pk %}">
+                                            {{ cast.actor.name }}
+                                            {% blocktrans with cast.actor.movie_appearances_count as cnt %}({{ cnt }} filme){% endblocktrans %}
+                                        </a>
+                                        <br />
+                                        <small>({{ cast.actor.get_age_range }})</small>
+                                    </p>
+                                </div>
+                            </div>
+
+                        </div>
+                    {% endfor %}
+
+                </div>
+            </div>
+
+            <div class="col-xs-12 col-md-6">
+                {% if Movie.youtube_video_code %}
+                    <iframe style="max-width: 100%" width="560" height="315" src="//www.youtube-nocookie.com/embed/{{ Movie.youtube_video_code }}" frameborder="0" allowfullscreen></iframe>
+                {% endif %}
+            </div>
+
+        </div>
+
+
+    
+    </div>
+{% endblock %}

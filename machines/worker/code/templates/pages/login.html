@@ -1,0 +1,24 @@
+{% extends "base/bootstrap.html" %}
+{% load i18n %}
+{% load staticfiles %}
+
+{% block Body %}
+
+    <form action="" method="POST">
+        {% csrf_token %}
+
+        <h3>{% trans "Autentificare Simpla" %}</h3>
+        <p style="color: #666666">{% trans "Alege unul din aceste conturi simple disponibile: " %}</p>
+
+        {% for us in AvailableSimpleUsers %}
+            <div class="user-single" style="margin-bottom: 10px; border-bottom: 1px solid #dddddd; padding-bottom: 10px">
+                <img style="float: left; height: 85px; border-radius: 5px; margin-right: 15px" src="{% static "avatar-empty.jpg" %}" />
+                <h5>{{ us.first_name }} {{ us.last_name }}</h5>
+                <input class="btn btn-info" type="submit" name="selected_user_{{ us.pk }}" value="{% trans "Alege Utilizator Simplu" %}" />
+                <div style="clear: both"></div>
+            </div>
+        {% endfor %}
+
+    </form>
+
+{% endblock %}

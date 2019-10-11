@@ -1,0 +1,101 @@
+# HomeCloud
+# > Docker Compose
+#
+# Author: Narcis.IO <n@narcis.io>
+
+version: '3.7'
+
+services:
+
+  mariadb:
+    build: ./machines/mariadb
+    volumes:
+      - ./runtime/mysql:/var/lib/mysql:cached
+      - ./src/fixtures:/docker-entrypoint-initdb.d:ro
+    environment:
+      MYSQL_ROOT_PASSWORD_FILE: /run/secrets/hc_db_root
+      MYSQL_DATABASE: homecloud
+      MYSQL_USER: hc_usr
+      MYSQL_PASSWORD: /run/secrets/hc_db_user
+    networks:
+      - hc_private
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 3s
+        max_attempts: 3
+        window: 120s
+    secrets:
+      - hc_db_root
+      - hc_db_user
+
+  proxy:
+    build: ./machines/proxy
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - worker
+    volumes:
+      - ./src/media:/hc_media:ro
+      - ./src/static:/hc_static:ro
+    networks:
+      - hc_pub
+      - hc_private
+    expose:
+      - "80"
+      - "443"
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 3s
+        max_attempts: 3
+        window: 120s
+
+  worker:
+    build:
+      context: ./machines/worker
+      args:
+        BUILD_TYPE: dev
+    # entrypoint: sleep infinity # cheat, if it crashes
+    volumes:
+      - ./machines/worker/code:/homecloud/code:ro
+      - ./machines/worker/setup:/homecloud/setup:ro
+      - ./src/media:/homecloud/media:rw
+    depends_on:
+      - mariadb
+    networks:
+      - hc_private
+    deploy:
+      restart_policy:
+        condition: any
+        delay: 3s
+        max_attempts: 3
+        window: 120s
+    secrets:
+      - hc_db_user
+      - hc_worker_code
+      - hc_worker_secret
+      - hc_db_root
+
+networks:
+  hc_pub:
+    internal: false
+  hc_private:
+    internal: true
+
+secrets:
+  hc_db_root:
+      file: ./runtime/secrets/hc_db_root.txt
+
+  hc_db_user:
+    file: ./runtime/secrets/hc_db_user.txt
+
+  hc_worker_code:
+    file: ./runtime/secrets/worker/hc_worker_code.txt
+
+  hc_worker_secret:
+    file: ./runtime/secrets/worker/hc_worker_secret.txt
+
+  #A:
+  #  file: ./secrets/app/A.txt

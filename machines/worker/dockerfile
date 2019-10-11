@@ -1,0 +1,36 @@
+# HomeCloud
+# > Worker > Dockerfile
+#
+# Author: Narcis.IO <n@narcis.io>
+
+FROM python:2.7.15-alpine3.8
+
+LABEL Description="UWSGI worker service for HomeCloud" \
+	Usage="docker build --build-arg BUILD_TYPE=dev ./web" \
+        Version="1.0"
+
+ARG BUILD_TYPE=prd
+
+RUN adduser --system --no-create-home "homecloud"
+# RUN groupadd "homecloud"
+
+COPY ./setup /homecloud/setup
+COPY ./code /homecloud/code
+
+RUN apk add --no-cache \
+        mariadb-client \
+        mariadb-connector-c-dev \
+        uwsgi \
+        uwsgi-python \
+        py-mysqldb \
+    && python2 -m ensurepip \
+    && pip --no-cache-dir install -r /homecloud/code/requirements.txt
+
+#&& find /usr/local \
+#        \( -type d -a -name test -o -name tests \) \
+#        -o \( -type f -a -name '*.pyc' -o -name '*.pyo' \) \
+#        -exec rm -rf '{}' \;
+
+EXPOSE 8000
+
+ENTRYPOINT ["/bin/sh", "/homecloud/setup/run.sh"]

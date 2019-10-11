@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+{% load staticfiles %}
+{% load i18n %}
+<html class="home-fancy">
+    <!-- Application developed by Pap Narcis-Marian, indented for usage with private, licensed video content -->
+    <head lang="en">
+        <meta charset="UTF-8">
+        <link rel="stylesheet" href="{% static "bootstrap/css/bootstrap.min.css" %}" />
+        <link rel="stylesheet" href="{% static "font-awesome/css/font-awesome.min.css" %}" />
+        <link rel="stylesheet" href="{% static "branding/styles.css" %}" />
+        <link rel="stylesheet" href="{% static "bootstrap-select/css/bootstrap-select.min.css" %}" />
+
+        <script src="{% static "jquery-2.1.1.min.js" %}"></script>
+
+        <link rel="apple-touch-icon" href="{% static "logo.png" %}">
+        <meta name="apple-mobile-web-app-capable" content="no">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1">
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+        <script type="text/javascript">
+            (function(document,navigator,standalone) {
+                // prevents links from apps from oppening in mobile safari
+                // this javascript must be the first script in your <head>
+                if ((standalone in navigator) && navigator[standalone]) {
+                    var curnode, location=document.location, stop=/^(a|html)$/i;
+                    document.addEventListener('click', function(e) {
+                        curnode=e.target;
+                        while (!(stop).test(curnode.nodeName)) {
+                            curnode=curnode.parentNode;
+                        }
+                        // Condidions to do this only on links to your own app
+                        // if you want all links, use if('href' in curnode) instead.
+                        if('href' in curnode && ( curnode.href.indexOf('http') || ~curnode.href.indexOf(location.host) ) ) {
+                            e.preventDefault();
+                            location.href = curnode.href;
+                        }
+                    },false);
+                }
+            })(document,window.navigator,'standalone');
+        </script>
+
+        <title>{{ Title }}</title>
+        {% block Header %}
+            <link href='http://fonts.googleapis.com/css?family=Lato:400,700' rel='stylesheet' type='text/css'>
+            <style>
+                body{font-family: "Lato", Arial, "Helvetica Neue", Helvetica, sans-serif}
+                h1, h2, h3, h4, h5{font-family: 'Lato', sans-serif; font-weight: bold}
+            </style>
+        {% endblock %}
+    </head>
+    <body class="home-cloud">
+        {% block Content %}
+
+            <div class="header-bar" style="background: #2b74a7; height: 35px; width: 100%; color: #ffffff;">
+                <div class="hbasa" style="max-width: 980px; margin: 0 auto; width: 100%; padding-top: 5px">
+                    <a href="/">
+                        <i class="fa fa-home"></i>
+                        {% trans "Lista Completa de Filme" %}
+                    </a>
+
+                    <span style="float: right">
+                        {% if CurrentUser %}
+                            <a href="{% url "Logout" %}">{% trans "Iesire din Cont" %}</a>
+                        {% else %}
+                            <a href="{% url "Login" %}">{% trans "Intra in Cont" %}</a>
+                        {% endif %}
+                    </span>
+
+
+                    {% if CurrentUser %}
+                        <span style="float: right">
+                            <a href="http://192.168.1.20:9092/" target="_blank">Transmissions</a> &bull; &nbsp;
+                        </span>
+                        <span style="float: right">
+                            <a href="{% if Movie %}http://subtitrari.regielive.ro/cauta.html?s={{ Movie.name|escape }}&categ=0{% else %}http://subtitrari.regielive.ro/{% endif %}" target="_blank">Regie Live</a> &bull; &nbsp;
+                        </span>
+                        <span style="float: right">
+                            <a href="/search/" target="">Cautare</a> &bull; &nbsp;
+                        </span>
+                    {% endif %}
+
+                </div>
+            </div>
+
+            <div class="header" style="background: #3686be; height: 100px; width: 100%; color: #ffffff; margin-bottom: 25px; margin-top: 0px">
+                <div style="max-width: 980px; margin: 0 auto; width: 100%">
+                    <div style="padding: 10px 15px">
+
+                        <div style="float: left">
+                            <div style="float: left; width: 100px">
+                                <i class="fa fa-play-circle" style="font-size: 80px"></i>
+                            </div>
+                            <div style="float: left">
+                                <h2 style="margin-top: 10px; margin-bottom: 0">{% trans "Home Cinema" %}</h2>
+                                <h4 style="margin-top: 2px">{{ Title }}</h4>
+                            </div>
+                            <div style="clear: both"></div>
+                        </div>
+
+                        <div style="float: right; margin-top: 20px" cla="hidden-sm hidden-xs">
+                            {% if CurrentUser %}
+                                {% trans "Bun venit, " %} {{ CurrentUser.first_name }}. <br />
+                                <a href="{% url "ViewedList" %}">{% trans "Filmele Mele" %}</a> -  <a href="{% url "PendingList" %}">{% trans "Lista de Vizionare" %}</a>
+                            {% else %}
+                                {% trans "Nu esti autentificat." %}<br />
+                                <a href="{% url "Login" %}">{% trans "Autentificare" %}</a>
+                            {% endif %}
+
+                            <!--{% trans "Filme Disponibile:" %} <b>{{ MovieCount }} intrari</b>.-->
+                            <!--{% trans "Seriale Disponibile: " %} <b>{{ ShowCount }}</b>-->
+                        </div>
+
+                        <div style="clear: both"></div>
+
+                    </div>
+                </div>
+            </div>
+
+            <div class="container">
+                {% block Body %}{% endblock %}
+            </div>
+        {% endblock %}
+
+        <div style="display: none">
+            <a href="" id="hiddenRedirectLink">Go here</a>
+        </div>
+
+    </body>
+
+    <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
+    <script src="{% static "branding/scripts.js" %}?rev=7"></script>
+    <script src="{% static "bootstrap-select/js/bootstrap-select.min.js" %}"></script>
+    <script src="{% static "bootstrap-select/js/i18n/defaults-ro_RO.min.js" %}"></script>
+
+</html>

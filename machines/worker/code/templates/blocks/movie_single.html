@@ -1,0 +1,49 @@
+{% load i18n %}
+{% load hc_helper %}
+
+<style>
+    .movie-block a{color: #fff; text-decoration: none}
+</style>
+
+<div id="movie-single-{{ movie.pk }}" class="movie-block {% if movie|is_movie_added_to_pending:CurrentUser %}movie-mark-pending{% endif %} {% if movie|is_movie_added_to_seen:CurrentUser %}movie-mark-viewed{% endif %}"
+     style="background-image: url('{{ movie.get_poster_thumbnail_url }}')">
+        <a href="{% url 'Movie' movie.pk %}">
+        <div class="movie-header" style="height: 65%">
+
+            <div class="movie-name">
+                {{ movie.name }}
+            </div>
+
+            <div class="movie-tags">
+
+                <div class="tag-single tag-subtitled tag-sb-{{ movie.is_subtitled }}">
+                    {% trans "SB" %}
+                </div>
+
+               <div class="tag-single tag-subtitled tag-year">
+                    {{ movie.release_date.year }}
+                </div>
+
+                {% if CanRemove %}
+                   <div class="tag-single tag-subtitled" style="background: #ae1b1f">
+                        <a style="color: #ffffff;cursor: pointer" onclick="$.get('{% url "RemoveList" movie.pk %}'); $('#movie-single-{{ movie.pk }}').remove(); return false;">{% trans "Sterge" %}</a>
+                    </div>
+                {% endif %}
+
+                <div style="clear: both"></div>
+
+            </div>
+
+        </div>
+
+        <div class="movie-line1">
+            {{ movie.tagline_translated }}
+        </div>
+
+        <div class="movie-line2">
+        {{ movie.get_linked_genres|safe }}
+        </div>
+
+        </a>
+
+    </div>

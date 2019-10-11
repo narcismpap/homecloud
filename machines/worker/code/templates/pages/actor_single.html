@@ -1,0 +1,98 @@
+{% extends "base/bootstrap.html" %}
+{% load i18n %}
+
+{% block Body %}
+    <div class="page-actor-single">
+
+        <div class="toolbox">
+            <div class="row">
+
+                <div class="col-xs-6 col-sm-4 col-md-2">
+                    <a style="cursor: pointer" onclick="history.go(-1)">
+                        <i class="fa fa-chevron-circle-left"></i>
+                        {% trans "Pagina anterioiara" %}
+                    </a>
+                </div>
+
+
+            </div>
+        </div>
+
+        <div class="row">
+
+            <div class="col-xs-12 col-md-3">
+                <img src="{{ Actor.get_profile_image_original_url }}" style="width: 100%; height: auto" />
+            </div>
+
+            <div class="col-xs-12 col-md-9">
+                <h2 style="margin-top: 0">
+                    {{ Actor.name }}
+                    <small>({{ Actor.get_age_range }})</small>
+                </h2>
+
+                    {% if Actor.list_aliases %}
+                        <div class="m-label">{% trans "Alte nume utilizate de actor" %}</div>
+                        {{ Actor.list_aliases }}
+                        <br /><br />
+                    {% endif %}
+
+                {% if Actor.biography %}
+                    <div class="profile-about-limited" style="max-height: 200px; overflow-y: auto">
+                        <div class="m-label">
+                            {% trans "Despre Actor" %}
+                            <span style="float: right">
+                                <a style="cursor: pointer" onclick="$('.biography-lang').hide(); $('.biography-lang-en').show();">{% trans "Engleza" %}</a> -
+                                <a style="cursor: pointer" onclick="$('.biography-lang').hide(); $('.biography-lang-ro').show();">{% trans "Romana" %}</a>
+                            </span>
+                        </div>
+
+                        <p style="color: #666" class="biography-lang biography-lang-en">{{ Actor.biography|safe }}</p>
+                        <p style="color: #666; display: none" class="biography-lang biography-lang-ro">{{ Actor.get_biography_translated|safe }}</p>
+                    </div>
+
+                {% endif %}
+
+
+
+                {% if Actor.place_of_birth %}
+                    <div class="m-label">{% trans "Locul Nasterii" %}</div>
+                    <p style="color: #666">{{ Actor.place_of_birth }}</p>
+                {% endif %}
+
+                {% if Actor.calculate_age %}
+                    <div class="m-label">{% trans "Date Profil" %}</div>
+                    <p style="color: #666">
+                        {% trans "Varsta" %}: {{ Actor.calculate_age }} {% trans " ani" %}<br />
+                        {% trans "Data de nastere" %}: {{ Actor.birthday }}<br />
+
+                        {% if actor.death %}
+                            {% trans "Data de deces" %}: {{ Actor.death }}<br />
+                        {% endif %}
+                    </p>
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+       <div style="border-top: 1px solid #dddddd; margin-top: 10px; padding-top: 10px">
+
+           <h4>{% trans "Filme Disponibile cu acest actor" %}</h4>
+
+            {% if not Actor.get_movies %}
+                <div class="alert alert-warning">
+                    <h4>{% trans "Nu exista rezultate" %}</h4>
+                    {% trans "Pentru cautarea facuta nu exista rezultate in baza de date locala." %}
+                </div>
+            {% else %}
+                {% for movie in Actor.get_movies %}
+                    {% include "blocks/movie_single.html" %}
+                {% endfor %}
+                <div style="clear: both"></div>
+            {% endif %}
+
+       </div>
+
+    </div>
+{% endblock %}

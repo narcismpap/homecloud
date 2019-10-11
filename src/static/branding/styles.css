@@ -1,0 +1,49 @@
+
+body{
+    background: #dbdbdb;
+    background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJod…EiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
+    background: -moz-linear-gradient(left, #dbdbdb 0%, #ffffff 50%, #ffffff 51%, #dbdbdb 100%);
+    background: -webkit-gradient(linear, left top, right top, color-stop(0%,#dbdbdb), color-stop(50%,#ffffff), color-stop(51%,#ffffff), color-stop(100%,#dbdbdb));
+    background: -webkit-linear-gradient(left, #dbdbdb 0%,#ffffff 50%,#ffffff 51%,#dbdbdb 100%);
+    background: -o-linear-gradient(left, #dbdbdb 0%,#ffffff 50%,#ffffff 51%,#dbdbdb 100%);
+    background: -ms-linear-gradient(left, #dbdbdb 0%,#ffffff 50%,#ffffff 51%,#dbdbdb 100%);
+    background: linear-gradient(to right, #dbdbdb 0%,#ffffff 50%,#ffffff 51%,#dbdbdb 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#dbdbdb', endColorstr='#dbdbdb',GradientType=1 );
+    color: #333;
+}
+
+.header-bar{}
+.header-bar a, .header a{color: #ffffff}
+.header a{color: #eeeeee; font-weight: bold}
+
+.movie-mark-pending{border: 5px solid seagreen}
+.movie-mark-viewed{border: 5px solid #ae1b1f}
+
+
+/* Movie Loop */
+.movie-block{margin-bottom: 20px;width: 220px;height: 330px;margin-left: 3px;background-color: #eeeeee;background-size: contain;position: relative;display: block;float: left;}
+.movie-header{color: #ffffff; position: absolute; top:0; left: 0; width: 100%; }
+.movie-name{background: rgba(0, 0, 0, 0.7); padding: 5px 10%}
+.movie-tags{}
+.tag-single{float: right; margin-left: 0px; padding: 2px 5px; background: rgba(0, 0, 0, 0.5);}
+.tag-subtitled{}
+.tag-sb-False{background: red}
+.tag-sb-True{background: darkgreen}
+
+.movie-line1{position: absolute; bottom: 30px; left: 0; background: rgba(0, 0, 0, 0.6); color: #ffffff; padding: 5px; width: 100%}
+.movie-line2{position: absolute; bottom: 0px; left: 0; background: rgba(0, 0, 0, 0.7); color: #fff;padding: 5px; width: 100%}
+.movie-line2 a{color: #ffffff; }
+
+.page-movies{}
+.page-movies-filter{}
+.page-movies-result{border-left: 1px solid #dddddd}
+
+.filter-single{}
+.filter-title{}
+.filter-values{}
+
+.m-label{font-size: 12px; color: #999}
+
+.toolbox{font-size: 13px; padding: 7px 10px; border: 1px solid #dddddd; border-radius: 5px; margin-bottom: 10px; background: #ffffff}
+
+.bootstrap-select{max-width: 100%}

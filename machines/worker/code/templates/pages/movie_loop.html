@@ -1,0 +1,138 @@
+{% extends "base/bootstrap.html" %}
+{% load i18n %}
+
+{% block Body %}
+
+    <div class="page-movies row" style="margin-bottom: 100px">
+
+        <div class="page-movies-filter col-lg-2 col-md-3 col-sm-5 col-xs-12">
+
+            <h4>
+                {% trans "Filtrare Rezultate" %}
+                {% if FilterHelper.is_filtering %}
+                    <a class="btn btn-info btn-sm" href="/">{% trans "Reseteaza" %}</a>
+                {% endif %}
+            </h4>
+
+            <div class="filter-single panel panel-default">
+                <div class="filter-title panel-heading">
+                    {% trans "Caracteristici Generale" %}
+                </div>
+                <div class="filter-values panel-body">
+
+                    <h5>{% trans "Categorie Cinematografica" %}</h5>
+                    <select name="categories" class="selectpicker" multiple data-live-search="true">
+                        {% for genre_id, genre_name in FilterHelper.get_available_genre.items %}
+                            <option {% if genre_id in FilterHelper.selected_genres %}selected="selected"{% endif %} value="{{ genre_id }}">{{ genre_name }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <h5>{% trans "Anul Lansarii" %}</h5>
+                    <select name="release_years" class="selectpicker" multiple data-live-search="true">
+                        {% for year in FilterHelper.get_available_years %}
+                            <option {% if year in FilterHelper.selected_years %}selected="selected"{% endif %} value="{{ year }}">{{ year }}</option>
+                        {% endfor %}
+                    </select>
+
+                    <h5>{% trans "Studio Productie" %}</h5>
+                    <select name="production_companies" class="selectpicker" multiple data-live-search="true">
+                        {% for comp_id, comp_name in FilterHelper.get_production_companies.items %}
+                            <option {% if comp_id in FilterHelper.selected_companies %}selected="selected"{% endif %} value="{{ comp_id }}">{{ comp_name }}</option>
+                        {% endfor %}
+                    </select>
+
+                </div>
+            </div>
+
+            <div class="filter-single panel panel-default">
+                <div class="filter-title panel-heading">
+                    {% trans "Filtrare Complexa" %}
+                </div>
+                <div class="filter-values panel-body">
+
+                    <input style="margin-bottom: 15px" value="{% if FilterHelper.selected_keyword %}{{ FilterHelper.selected_keyword }}{% endif %}" class="form-control" type="text" name="keyword" placeholder="{% trans "Termen de cautare (optional)" %}" />
+                    <input {% if FilterHelper.only_subtitled %}checked="checked"{% endif %} type="checkbox" value="1" name="only_sb" id="only_sb_option" /> {% trans "Doar filmele subtitrate" %}<br />
+
+                    {% if CurrentUser %}
+                        <input {% if FilterHelper.only_unlisted %}checked="checked"{% endif %} type="checkbox" value="1" name="only_unlisted" id="only_unlisted" /> {% trans "Doar filmele nelistate" %}
+                    {% endif %}
+
+                    <h5>{% trans "Ordonare Rezultate" %}</h5>
+                    <select class="selectpicker" id="order_type" name="order_type">
+                        <option {% if FilterHelper.current_order == "standard" %}selected="selected"{% endif %} value="standard">{% trans "Standard" %}</option>
+                        <option {% if FilterHelper.current_order == "rating" %}selected="selected"{% endif %}value="rating">{% trans "Rating General" %}</option>
+                        <option {% if FilterHelper.current_order == "duration" %}selected="selected"{% endif %}value="duration">{% trans "Durata Film" %}</option>
+                        <option {% if FilterHelper.current_order == "year" %}selected="selected"{% endif %}value="year">{% trans "An de lansare" %}</option>
+                        <option {% if FilterHelper.current_order == "popularity" %}selected="selected"{% endif %}value="popularity">{% trans "Popularitate" %}</option>
+
+                    </select>
+
+
+                </div>
+            </div>
+
+            <div style="text-align: center;margin-top: 20px">
+                <a class="btn btn-lg btn-info" onclick="filter_search()">{% trans "Cauta Filme" %}</a>
+            </div>
+
+        </div>
+
+        <div class="page-movies-result col-lg-10 col-md-9 col-sm-7 col-xs-12">
+
+            <h4>
+                {% trans "Filme Disponibile" %}
+                <small>({{ TotalCount }} {% trans "rezultate" %}, {% trans "Pagina: " %} #{{ CurrentPage }})</small>
+                <span style="float: right">
+                    <small>{% trans "Sunt afisate rezultatele de la pozitiile:" %} {{ IndexStart }} - {{ IndexStop }}</small>
+                </span>
+            </h4>
+
+            {% if HasNextPage or HasPreviousPage %}
+                <div style="margin-bottom: 15px">
+                    {% if HasNextPage %}
+                        <a class="btn btn-default" style="cursor:pointer; float: right" onclick="sc_inc(); filter_search()">{% trans "Urmatoarea Pagina" %}</a>
+                    {% endif %}
+
+                    {% if HasPreviousPage %}
+                        <a class="btn btn-default" style="cursor:pointer; float: right; margin-right: 10px" onclick="sc_dec(); filter_search()">{% trans "Pagina Anterioara" %}</a>
+                    {% endif %}
+
+                    <div style="clear: both"></div>
+                </div>
+            {% endif %}
+
+            {% if not Movies %}
+                <div class="alert alert-warning">
+                    <h4>{% trans "Nu exista rezultate" %}</h4>
+                    {% trans "Pentru cautarea facuta nu exista rezultate in baza de date locala." %}
+                </div>
+            {% else %}
+                {% for movie in Movies %}
+                    {% include "blocks/movie_single.html" %}
+                {% endfor %}
+                <div style="clear: both"></div>
+            {% endif %}
+
+            {% if HasNextPage %}
+                <a class="btn btn-default" style="cursor:pointer; float: right" onclick="sc_inc(); filter_search()">{% trans "Urmatoarea Pagina" %}</a>
+            {% endif %}
+
+            {% if HasPreviousPage %}
+                <a class="btn btn-default" style="cursor:pointer; float: right; margin-right: 10px" onclick="sc_dec(); filter_search()">{% trans "Pagina Anterioara" %}</a>
+            {% endif %}
+
+            <div style="clear: both"></div>
+
+        </div>
+
+        <div style="clear: both"></div>
+    
+    </div>
+
+    <script>
+        $(document).ready(function(){
+            set_current_page({{ CurrentPage }});
+        });
+    </script>
+
+{% endblock %}

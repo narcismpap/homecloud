@@ -1,0 +1,49 @@
+{% extends "base/bootstrap.html" %}
+{% load i18n %}
+{% load staticfiles %}
+{% load hc_helper %}
+
+{% block Body %}
+
+    <h3>{% trans "Cautare Filme Noi" %}</h3>
+
+    <form action="" method="POST">
+        {% csrf_token %}
+        <a href="https://yts.re/api#listDocs" target="_blank">Documentatie</a>
+        <input class="form-control" type="text" name="source" value="{% if SourceLink %}{{ SourceLink }}{% else %}https://yts.re/api/list.json?quality=1080p&keywords=2014&sort=seeds{% endif %}" />
+        <input class="btn btn-success btn-sm" type="submit" name="search_new" value="{% trans "Incarca datale de la server" %}" />
+    </form>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <td>{% trans "Titlu" %}</td>
+                <td>{% trans "IMDb" %}</td>
+                <td>{% trans "Calitate" %}</td>
+                <td>{% trans "Gen" %}</td>
+                <td>{% trans "Tehnical" %}</td>
+                <td>{% trans "Link-uri" %}</td>
+            </tr>
+        </thead>
+        <tbody>
+            {% for result in results %}
+                <tr>
+                    <td>{{ result.MovieTitle }} <small style="color: #999">{{ result.MovieYear }}</small></td>
+                    <td>
+                        <a href='{{ result.ImdbLink }}' target="_blank">{{ result.ImdbCode }}</a>
+
+                    </td>
+                    <td>{{ result.Quality }}</td>
+                    <td>{{ result.Genre }}</td>
+                    <td>{{ result.Size }} - Exista: {{ result.ImdbCode|has_movie_by_imdb }}</td>
+                    <td>
+                        <a href="{{ result.TorrentUrl }}">.torrent</a><br />
+                        <a href="{{ result.TorrentUrl }}">.magnet</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+
+    </table>
+
+{% endblock %}

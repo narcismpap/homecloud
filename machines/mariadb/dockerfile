@@ -1,0 +1,8 @@
+# HomeCloud
+# > DB > Dockerfile
+#
+# Author: Narcis.IO <n@narcis.io>
+
+FROM mariadb:10.3.9-bionic
+
+COPY ./mysql /etc/mysql

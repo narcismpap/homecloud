@@ -1,0 +1,8 @@
+# HomeCloud
+# > Proxy > Dockerfile
+#
+# Author: Narcis.IO <n@narcis.io>
+
+FROM nginx:1.15.3-alpine
+
+COPY ./nginx /etc/nginx
