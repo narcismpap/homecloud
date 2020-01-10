@@ -1,5 +1,5 @@
 Django==1.6.3
 tmdbsimple==0.3.0
-requests==2.3.0
+requests==2.20.0
 unidecode==0.04.16
 django-lockdown==1.0.0
