@@ -1,4 +1,4 @@
-Django==1.6.3
+Django==1.11.23
 tmdbsimple==0.3.0
 requests==2.3.0
 unidecode==0.04.16
